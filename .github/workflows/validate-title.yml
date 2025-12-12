@@ -18,9 +18,8 @@ jobs:
             const types = [
               'feat',
               'fix',
-              'formula',
               'design',
-              'maintenance',
+              'chore',
               'test'
             ];
 
@@ -31,14 +30,18 @@ jobs:
               'mybalance'
             ];
             
+            const choreRegex = /^chore\s-\s.+$/;
             const regex = new RegExp(`^(${types.join('|')}):(${areas.join('|')})\\s-\\s.+$`);
 
-            if (!regex.test(title.toLowerCase())) {
+            if (!choreRegex.test(title) && !normalRegex.test(title)) {
               core.setFailed(
-                `잘못된 PR 제목 형식입니다.\n\n` +
-                `'type:area - 설명' 형식으로 바꿔주세요.\n\n` +
-                `'type: feat, fix, formula, design, maintenance, test\n\n` +
-                `'area: admin, auth, calc, mybalance'\n\n` +
-                `현재 제목: "${title}"`
+                `Please update the PR title to follow the 'type:area - description' format.` +
+                `\n` +
+                `* type: feat, fix, design, chore, test` +
+                `\n` +
+                `* area: admin, auth, calc, mybalance` +
+                `\n` +
+                `\n` +
+                `Current title: ${title}`
               );
             }

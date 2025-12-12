@@ -16,11 +16,10 @@ jobs:
             const labelsToAdd = [];
 
             // TYPE RULES
-            if (title.startsWith('feature:')) labelsToAdd.push('type: feature');
+            if (title.startsWith('feat:')) labelsToAdd.push('type: feat');
             if (title.startsWith('fix:')) labelsToAdd.push('type: fix');
-            if (title.startsWith('formula:')) labelsToAdd.push('type: formula');
             if (title.startsWith('design:')) labelsToAdd.push('type: design');
-            if (title.startsWith('maintenance:')) labelsToAdd.push('type: maintenance');
+            if (title.startsWith('chore:')) labelsToAdd.push('type: chore');
             if (title.startsWith('test:')) labelsToAdd.push('type: test');
 
             // AREA RULES
