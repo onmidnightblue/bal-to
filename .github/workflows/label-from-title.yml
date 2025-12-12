@@ -1,0 +1,38 @@
+name: Label PR by title
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const title = context.payload.pull_request.title.toLowerCase();
+            const labelsToAdd = [];
+
+            // TYPE RULES
+            if (title.startsWith('feature:')) labelsToAdd.push('type: feature');
+            if (title.startsWith('fix:')) labelsToAdd.push('type: fix');
+            if (title.startsWith('formula:')) labelsToAdd.push('type: formula');
+            if (title.startsWith('design:')) labelsToAdd.push('type: design');
+            if (title.startsWith('maintenance:')) labelsToAdd.push('type: maintenance');
+            if (title.startsWith('test:')) labelsToAdd.push('type: test');
+
+            // AREA RULES
+            if (title.match(/^[a-z]+:admin\b/)) labelsToAdd.push('area: admin');
+            if (title.match(/^[a-z]+:auth\b/)) labelsToAdd.push('area: auth');
+            if (title.match(/^[a-z]+:calc\b/)) labelsToAdd.push('area: calc');
+            if (title.match(/^[a-z]+:mybalance\b/)) labelsToAdd.push('area: mybalance');
+            
+            if (labelsToAdd.length > 0) {
+              await github.rest.issues.addLabels({
+                ...context.repo,
+                issue_number: context.payload.pull_request.number,
+                labels: labelsToAdd,
+              });
+            }

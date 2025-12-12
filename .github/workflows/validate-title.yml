@@ -1,0 +1,44 @@
+name: Validate PR Title
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+
+jobs:
+  validate-title:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validate PR Title Format
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const title = context.payload.pull_request.title.trim();
+            
+            const types = [
+              'feat',
+              'fix',
+              'formula',
+              'design',
+              'maintenance',
+              'test'
+            ];
+
+            const areas = [
+              'admin',
+              'auth',
+              'calc',
+              'mybalance'
+            ];
+            
+            const regex = new RegExp(`^(${types.join('|')}):(${areas.join('|')})\\s-\\s.+$`);
+
+            if (!regex.test(title.toLowerCase())) {
+              core.setFailed(
+                `잘못된 PR 제목 형식입니다.\n\n` +
+                `'type:area - 설명' 형식으로 바꿔주세요.\n\n` +
+                `'type: feat, fix, formula, design, maintenance, test\n\n` +
+                `'area: admin, auth, calc, mybalance'\n\n` +
+                `현재 제목: "${title}"`
+              );
+            }
